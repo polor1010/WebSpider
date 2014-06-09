@@ -14,9 +14,17 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    WebSpider.cpp
+    WebSpider.cpp \
+    brokerdb.cpp \
+    stockdb.cpp \
+    QLogger.cpp \
+    logdb.cpp
 
 HEADERS += \
-    WebSpider.h
+    WebSpider.h \
+    brokerdb.h \
+    stockdb.h \
+    QLogger.h \
+    logdb.h
 
 

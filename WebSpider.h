@@ -24,9 +24,8 @@ public slots:
     void reLoad();
 
 private:
-    void getBrokers();
-    void getStocks();
     void wait(int msec);
+    double currencyToNumber(QString value);
 
 private:
     QWebView* m_view;

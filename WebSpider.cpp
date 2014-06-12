@@ -6,9 +6,11 @@
 #include <QDebug>
 #include <QtSql/QtSql>
 #include "stockdb.h"
+#include "logdb.h"
 
 WebSpider::WebSpider()
 {
+    m_stockID = "";
     m_stockIndex = 0;
     m_pageIndex = 1;
     m_view = new QWebView();
@@ -27,13 +29,55 @@ WebSpider::~WebSpider()
     delete m_view;
 }
 
+
+int WebSpider::getIndexOfStockID()
+{
+    m_stockID = LogDB::getFinishID();
+
+    if( m_stockID == "" )
+    {
+        return 0;
+    }
+    else
+    {
+        int size = m_stockList.count();
+        int index;
+        int i;
+        for( i = 0 ; i < size ; ++i )
+        {
+            if( m_stockList.at(m_stockIndex).split(" ")[0] == m_stockID )
+            {
+                index = i;
+            }
+        }
+
+        if( index == size - 1 )//finished parser data
+        {
+            return -1;
+        }
+        else
+        {
+            return index;
+        }
+    }
+}
+
 void WebSpider::start()
 {
-    if( m_stockList.count() > 0 )
+    m_pageIndex = getIndexOfStockID();
+
+    if( m_pageIndex == -1 )
     {
-        QString stockID = m_stockList.at(m_stockIndex).split(" ")[0];
-        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(stockID).arg(m_pageIndex);
-        m_view->load(QUrl(url));
+        qDebug() << "finished parser size.";
+    }
+    else
+    {
+        if( m_stockList.count() > 0 )
+        {
+            m_stockID = m_stockList.at(m_stockIndex).split(" ")[0];
+            QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(m_stockID).arg(m_pageIndex);
+            m_view->load(QUrl(url));
+        }
     }
 }
 
@@ -58,8 +102,8 @@ void WebSpider::getNextIndex()
 
     if( m_stockIndex < m_stockList.count() )
     {
-        QString stockID = m_stockList.at(m_stockIndex).split(" ")[0];
-        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(stockID).arg(m_pageIndex);
+        m_stockID = m_stockList.at(m_stockIndex).split(" ")[0];
+        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(m_stockID).arg(m_pageIndex);
 
         qDebug() << url;
 
@@ -73,8 +117,8 @@ void WebSpider::reLoad()
 {
     if( m_stockIndex < m_stockList.count() )
     {
-        QString stockID = m_stockList.at(m_stockIndex).split(" ")[0];
-        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(stockID).arg(m_pageIndex);
+        m_stockID = m_stockList.at(m_stockIndex).split(" ")[0];
+        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(m_stockID).arg(m_pageIndex);
 
         qDebug() << url;
 
@@ -86,13 +130,22 @@ void WebSpider::reLoad()
 
 void WebSpider::getNextStock()
 {
+    if( m_stockIndex == 1 )
+    {
+        LogDB::insertLog(m_stockID);
+    }
+    else
+    {
+        LogDB::updateLog(m_stockID);
+    }
+
     m_stockIndex += 1;
     m_pageIndex = 1;
 
     if( m_stockIndex < m_stockList.count() )
     {
-        QString stockID = m_stockList.at(m_stockIndex).split(" ")[0];
-        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(stockID).arg(m_pageIndex);
+        m_stockID = m_stockList.at(m_stockIndex).split(" ")[0];
+        QString url  = QString("http://bsr.twse.com.tw/bshtm/bsContent.aspx?StartNumber=%1&FocusIndex=%2").arg(m_stockID).arg(m_pageIndex);
 
         qDebug() << url;
 

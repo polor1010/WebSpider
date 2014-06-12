@@ -26,12 +26,14 @@ public slots:
 private:
     void wait(int msec);
     double currencyToNumber(QString value);
+    int getIndexOfStockID();
 
 private:
     QWebView* m_view;
     QString m_dbPath;
     QStringList m_stockList;
 
+    QString m_stockID;
     int m_stockIndex;
     int m_pageIndex;
 

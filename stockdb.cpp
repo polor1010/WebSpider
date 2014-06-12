@@ -129,7 +129,6 @@ void StockDB::getStocks(QStringList &list)
         }
         else
         {
-
             list.clear();
             while( query.next() )
             {

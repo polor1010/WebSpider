@@ -27,6 +27,7 @@ private:
     void wait(int msec);
     double currencyToNumber(QString value);
     int getIndexOfStockID();
+    //int getProgress();
 
 private:
     QWebView* m_view;

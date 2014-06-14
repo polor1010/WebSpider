@@ -1,7 +1,5 @@
 #include "stockdb.h"
 #include <QtSql/QtSql>
-#include "QLogger.h"
-using namespace QLogger;
 
 StockDB::StockDB()
 {

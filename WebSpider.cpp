@@ -7,6 +7,7 @@
 #include <QtSql/QtSql>
 #include "stockdb.h"
 #include "logdb.h"
+#include "summarydb.h"
 
 WebSpider::WebSpider()
 {
@@ -34,6 +35,7 @@ int WebSpider::getIndexOfStockID()
 {
     m_stockID = LogDB::getFinishID();
 
+    qDebug() << "stockID" << m_stockID;
     if( m_stockID == "" )
     {
         return 0;
@@ -45,7 +47,7 @@ int WebSpider::getIndexOfStockID()
         int i;
         for( i = 0 ; i < size ; ++i )
         {
-            if( m_stockList.at(m_stockIndex).split(" ")[0] == m_stockID )
+            if( m_stockList.at(i).split(" ")[0] == m_stockID )
             {
                 index = i;
             }
@@ -64,8 +66,9 @@ int WebSpider::getIndexOfStockID()
 
 void WebSpider::start()
 {
-    m_pageIndex = getIndexOfStockID();
+    m_stockIndex = getIndexOfStockID();
 
+    qDebug() << "start stockIndex : " << m_stockIndex;
     if( m_pageIndex == -1 )
     {
         qDebug() << "finished parser size.";
@@ -204,12 +207,50 @@ void WebSpider::loadFinished( bool ok )
     {
         QWebElementCollection elements = m_view->page()->mainFrame()->findAllElements("tr");
 
+        QString data,stockID,tradeReceive,tradeAmount,tradeQuantity;
         int i;
         int trCounter = 0;
         QStringList strList;
         for( i = 0 ; i < elements.count() ; ++i )
         {
             QString className = elements.at(i).attribute("class");
+
+            if( className == "" )
+            {
+                QWebElementCollection childElement = elements.at(i).findAll("td");
+
+                int j;
+                for( j = 0 ; j < childElement.count() ; ++j )
+                {
+                    QString idName = childElement.at(j).attribute("id");
+
+                    if( idName == "receive_date" )
+                    {
+                        data = childElement.at(j).toInnerXml();
+                        //qDebug() << childClassName;
+                    }
+                    if( idName == "stock_id" )
+                    {
+                        stockID = childElement.at(j).toInnerXml();
+                        //qDebug() << childClassName;
+                    }
+                    if( idName == "trade_rec" )
+                    {
+                        tradeReceive = childElement.at(j).toInnerXml();
+                        //qDebug() << childClassName;
+                    }
+                    if( idName == "trade_amt" )
+                    {
+                        tradeAmount = childElement.at(j).toInnerXml();
+                        //qDebug() << childClassName;
+                    }
+                    if( idName == "trade_qty" )
+                    {
+                        tradeQuantity = childElement.at(j).toInnerXml();
+                        //qDebug() << childClassName;
+                    }
+                }
+            }
             if( className == "column_value_price_3" || className == "column_value_price_2" )
             {
                 trCounter++;
@@ -238,13 +279,21 @@ void WebSpider::loadFinished( bool ok )
         if( strList.count() > 0 )
             StockDB::insertDeals(strList);
 
-        qDebug() << "trCounter : " << trCounter << m_stockIndex << m_pageIndex;
+        qDebug() << "trCounter : " << trCounter << "stockIndex : "<< m_stockIndex << "pageIndex :"<< m_pageIndex;
         qDebug() << QDateTime::currentDateTime().toString();
+
+        if( m_pageIndex == 1 )
+        {
+            QString str = data + " " + stockID + " "+ tradeReceive + " "+ tradeAmount + " "+tradeQuantity;
+            SummaryDB::insert(str);
+        }
 
         if( trCounter < 100 )
             getNextStock();
         else
             getNextIndex();
+
+
 
     }
     else

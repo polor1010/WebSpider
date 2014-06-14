@@ -17,14 +17,14 @@ SOURCES += main.cpp \
     WebSpider.cpp \
     brokerdb.cpp \
     stockdb.cpp \
-    QLogger.cpp \
-    logdb.cpp
+    logdb.cpp \
+    summarydb.cpp
 
 HEADERS += \
     WebSpider.h \
     brokerdb.h \
     stockdb.h \
-    QLogger.h \
-    logdb.h
+    logdb.h \
+    summarydb.h
 
 

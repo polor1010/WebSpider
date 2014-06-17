@@ -44,11 +44,12 @@ void SummaryDB::insert(QString str)
 
         QString timeNow = str.split(" ").at(0);
         QString stockID = str.split(" ").at(1);
-        int tradeReceive = str.split(" ").at(2).toInt();
-        int tradeAmount = str.split(" ").at(3).toInt();
-        int tradeQuantity = str.split(" ").at(4).toInt();
+        QString tradeReceive = str.split(" ").at(2);
+        QString tradeAmount = str.split(" ").at(3);
+        QString tradeQuantity = str.split(" ").at(4);
 
         command =  QString( "insert into Summary ( time , ID , tradeReceive , tradeAmount , tradeQuantity) values('%1','%2','%3','%4','%5') ").arg(timeNow).arg(stockID).arg(tradeReceive).arg(tradeAmount).arg(tradeQuantity);
+        //qDebug() << command;
         //qDebug() << command;
 
         IsOk = query.exec(command);

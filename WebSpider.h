@@ -20,7 +20,7 @@ public slots:
     void loadFinished(bool);
 
     void getNextIndex();
-    void getNextStock();
+    void getNextStock(QString timeNow);
     void reLoad();
 
 private:
@@ -37,6 +37,7 @@ private:
     QString m_stockID;
     int m_stockIndex;
     int m_pageIndex;
+    QString m_timeNow;
 
 };
 

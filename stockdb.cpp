@@ -101,8 +101,11 @@ void StockDB::insertDeals(QStringList strList)
             QString stockID = str.split(" ")[0];
             QString brokerID = str.split(" ")[1];
             QString price = str.split(" ")[2];
+            price.replace(",","");
             QString buy = str.split(" ")[3];
+            buy.replace(",","");
             QString sell = str.split(" ")[4];
+            sell.replace(",","");
 
             command += QString(" ('%1','%2','%3','%4','%5','%6') ").arg( timeNow).arg(stockID).arg( brokerID).arg( price).arg( buy).arg( sell);
 

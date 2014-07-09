@@ -20,9 +20,6 @@ WebSpider::WebSpider()
 
     StockDB::getStocks(m_stockList);
 
-    QString str = "10,234.83";
-    qDebug() << str << currencyToNumber(str);
-
 }
 
 WebSpider::~WebSpider()

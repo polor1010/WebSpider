@@ -1,7 +1,7 @@
 #include "summarydb.h"
 #include <QtSql/QtSql>
 
-QString SummaryDB::m_tableName = "Summary";
+QString SummaryDB::m_tableName = "Summaries";
 QString SummaryDB::m_dbPath = "./Stock.db";
 
 SummaryDB::SummaryDB()
@@ -33,7 +33,7 @@ void SummaryDB::insert(QString str)
         QSqlQuery query(dbconn);
 
         QString command;
-        command = "create table if not exists Summary ( time datetime , ID text , tradeReceive int , tradeAmount int , tradeQuantity int );";
+        command = "create table if not exists Summaries ( time datetime , stockID text , tradeReceive flaot64 , tradeAmount flaot64 , tradeQuantity flaot64 );";
         bool IsOk = query.exec(command);
 
         if( !IsOk )
@@ -45,10 +45,13 @@ void SummaryDB::insert(QString str)
         QString timeNow = str.split(" ").at(0);
         QString stockID = str.split(" ").at(1);
         QString tradeReceive = str.split(" ").at(2);
+        tradeReceive.replace(",","");
         QString tradeAmount = str.split(" ").at(3);
+        tradeAmount.replace(",","");
         QString tradeQuantity = str.split(" ").at(4);
+        tradeQuantity.replace(",","");
 
-        command =  QString( "insert into Summary ( time , ID , tradeReceive , tradeAmount , tradeQuantity) values('%1','%2','%3','%4','%5') ").arg(timeNow).arg(stockID).arg(tradeReceive).arg(tradeAmount).arg(tradeQuantity);
+        command =  QString( "insert into Summaries ( time , stockID , tradeReceive , tradeAmount , tradeQuantity) values('%1','%2','%3','%4','%5') ").arg(timeNow).arg(stockID).arg(tradeReceive).arg(tradeAmount).arg(tradeQuantity);
         //qDebug() << command;
         //qDebug() << command;
 
